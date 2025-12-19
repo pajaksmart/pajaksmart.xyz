@@ -1,0 +1,34 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy main/ to Hostinger via FTP
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USERNAME }}
+          password: ${{ secrets.HOSTINGER_PASSWORD }}
+          protocol: ${{ secrets.HOSTINGER_PROTOCOL || 'ftp' }}
+          port: ${{ secrets.HOSTINGER_PORT || '21' }}
+          local-dir: ./main
+          server-dir: ${{ secrets.HOSTINGER_REMOTE_PATH || '/public_html' }}
+
+# Notes:
+# - Set the following repository Secrets in GitHub Settings → Secrets & variables → Actions:
+#   * HOSTINGER_HOST (e.g. ftp.yourdomain.com)
+#   * HOSTINGER_USERNAME
+#   * HOSTINGER_PASSWORD
+#   * (optional) HOSTINGER_REMOTE_PATH (default: /public_html)
+#   * (optional) HOSTINGER_PROTOCOL (ftp or ftps)
+#   * (optional) HOSTINGER_PORT (default 21)
